@@ -1,0 +1,225 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Edit Produk</h1>
+            <p class="text-gray-500 mt-1">Perbarui informasi produk: <span class="text-pink-600 font-semibold">{{ $product->name }}</span></p>
+        </div>
+        <a href="{{ route('products.index') }}" class="px-6 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Batal
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="p-8">
+            @csrf
+            @method('PUT') <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Informasi Dasar</h3>
+                
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
+                        <input type="text" name="name" value="{{ old('name', $product->name) }}" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div x-data="{ 
+                            open: false, 
+                            selectedId: '{{ $product->category_id }}', 
+                            selectedName: '{{ $product->category->name }}' 
+                        }" class="relative">
+                            
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+
+                            <input type="hidden" name="category_id" x-model="selectedId" required>
+
+                            <button type="button" 
+                                    @click="open = !open" 
+                                    @click.outside="open = false"
+                                    class="w-full bg-white px-4 py-3 rounded-lg border border-gray-300 flex justify-between items-center transition duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-left">
+                                
+                                <span x-text="selectedName" class="text-gray-900"></span>
+                                
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div x-show="open" 
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95"
+                                class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-100 py-1 overflow-hidden"
+                                style="display: none;">
+                                
+                                @foreach($categories as $category)
+                                    <div @click="selectedId = '{{ $category->id }}'; selectedName = '{{ $category->name }}'; open = false"
+                                        class="px-4 py-3 cursor-pointer transition-colors duration-150 flex items-center justify-between group hover:bg-pink-500 hover:text-white">
+                                        <span class="font-medium">{{ $category->name }}</span>
+                                        <span x-show="selectedId == '{{ $category->id }}'" class="text-pink-600 group-hover:text-white font-bold"></span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Harga (Rupiah)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">Rp</span>
+                                <input type="number" name="price" value="{{ old('price', $product->price) }}" 
+                                    class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Inventaris & Detail</h3>
+    
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Stok</label>
+                        <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200" required>
+                    </div>
+
+                    <div x-data="{ 
+                        open: false, 
+                        selectedId: '{{ $product->status }}', 
+                        selectedName: '{{ $product->status == 'ready' ? 'Ready Stock' : 'Pre-Order (PO)' }}' 
+                    }" class="relative">
+                        
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status Penjualan</label>
+
+                        <input type="hidden" name="status" x-model="selectedId">
+
+                        <button type="button" 
+                                @click="open = !open" 
+                                @click.outside="open = false"
+                                class="w-full bg-white px-4 py-3 rounded-lg border border-gray-300 flex justify-between items-center transition duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-left">
+                            
+                            <span x-text="selectedName" class="text-gray-900"></span>
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-100 py-1 overflow-hidden"
+                            style="display: none;">
+                            
+                            <div @click="selectedId = 'pre-order'; selectedName = 'Pre-Order (PO)'; open = false"
+                                class="px-4 py-3 cursor-pointer transition-colors duration-150 flex items-center justify-between group hover:bg-pink-500 hover:text-white">
+                                <span class="font-medium">Pre-Order (PO)</span>
+                                <span x-show="selectedId == 'pre-order'" class="text-pink-600 group-hover:text-white font-bold"></span>
+                            </div>
+
+                            <div @click="selectedId = 'ready'; selectedName = 'Ready Stock'; open = false"
+                                class="px-4 py-3 cursor-pointer transition-colors duration-150 flex items-center justify-between group hover:bg-pink-500 hover:text-white">
+                                <span class="font-medium">Ready Stock</span>
+                                <span x-show="selectedId == 'ready'" class="text-pink-600 group-hover:text-white font-bold"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Produk</label>
+                    <textarea name="description" rows="5" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200" required>{{ old('description', $product->description) }}</textarea>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Foto Produk</h3>
+                
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition relative" id="upload-container">
+                    
+                    <input type="file" name="image" id="image-input" 
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
+                        accept="image/*" onchange="previewImage(event)">
+                    
+                    @if($product->image)
+                        <div id="placeholder-view" class="hidden text-gray-500">
+                            <span class="block text-4xl mb-2">📷</span>
+                            <span class="font-medium text-pink-600">Klik untuk ganti foto</span>
+                        </div>
+                        <div id="preview-view" class="relative z-10">
+                            <img id="image-preview" src="{{ asset('storage/' . $product->image) }}" alt="Preview" class="mx-auto max-h-64 rounded shadow-lg border border-gray-200">
+                            <p id="file-name" class="mt-2 text-sm text-gray-600 font-medium">Foto Saat Ini</p>
+                            <p class="text-xs text-pink-500 mt-1">Klik gambar untuk mengganti</p>
+                        </div>
+                    @else
+                        <div id="placeholder-view" class="text-gray-500">
+                            <span class="block text-4xl mb-2">📷</span>
+                            <span class="font-medium text-pink-600">Klik untuk upload foto</span>
+                        </div>
+                        <div id="preview-view" class="hidden relative z-10">
+                            <img id="image-preview" src="#" alt="Preview" class="mx-auto max-h-64 rounded shadow-lg border border-gray-200">
+                            <p id="file-name" class="mt-2 text-sm text-gray-600 font-medium"></p>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+                <a href="{{ route('products.index') }}" class="px-6 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Batal
+                </a>
+
+                <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:-translate-y-0.5 transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <span>Perbarui Produk</span>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const placeholder = document.getElementById('placeholder-view');
+        const previewView = document.getElementById('preview-view');
+        const imagePreview = document.getElementById('image-preview');
+        const fileName = document.getElementById('file-name');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                fileName.textContent = "Foto Baru: " + input.files[0].name;
+                
+                placeholder.classList.add('hidden');
+                previewView.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+@endsection
