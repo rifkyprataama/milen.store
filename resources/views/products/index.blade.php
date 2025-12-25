@@ -100,29 +100,25 @@
 </div>
 
 <script>
-    // Pilih semua form yang punya class '.delete-form'
     const deleteForms = document.querySelectorAll('.delete-form');
 
     deleteForms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            // 1. Cegah form agar tidak langsung dikirim
             e.preventDefault();
 
-            // 2. Tampilkan Popup Konfirmasi SweetAlert
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 text: "Data produk ini akan dihapus permanen!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33', // Warna merah untuk tombol hapus
-                cancelButtonColor: '#3085d6', // Warna biru untuk batal
+                confirmButtonColor: '#d33', 
+                cancelButtonColor: '#3085d6', 
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true // Tombol batal di kiri, hapus di kanan
+                reverseButtons: true 
             }).then((result) => {
-                // 3. Jika user klik "Ya, Hapus!"
+
                 if (result.isConfirmed) {
-                    // Kirim form secara manual
                     form.submit();
                 }
             });

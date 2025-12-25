@@ -186,7 +186,6 @@
 </div>
 
 <script>
-    // Fungsi Menampilkan Preview
     function previewImage(event) {
         const input = event.target;
         const placeholder = document.getElementById('placeholder-view');
@@ -208,20 +207,17 @@
         }
     }
 
-    // Fungsi Reset Tampilan (BARU)
     function resetPreview() {
         const input = document.getElementById('image-input');
         const placeholder = document.getElementById('placeholder-view');
         const previewView = document.getElementById('preview-view');
         const imagePreview = document.getElementById('image-preview');
 
-        // Kembalikan ke kondisi awal
-        input.value = ''; // Pastikan input file kosong
+        input.value = ''; 
         imagePreview.src = '#';
         
-        // Switch Tampilan Balik
-        previewView.classList.add('hidden'); // Sembunyikan foto
-        placeholder.classList.remove('hidden'); // Munculkan ikon kamera
+        previewView.classList.add('hidden'); 
+        placeholder.classList.remove('hidden'); 
     }
 </script>
 @endsection

@@ -18,9 +18,17 @@
             <a href="{{ route('products.index') }}" class="text-2xl font-bold text-pink-600 tracking-tighter hover:text-pink-700 transition">
                 Milen.store
             </a>
-            <div class="space-x-4">
-                <a href="{{ route('products.index') }}" class="text-sm font-medium text-gray-600 hover:text-pink-600 transition">Dashboard</a>
-                <a href="#" class="text-sm font-medium text-gray-600 hover:text-pink-600 transition">Kategori</a>
+            <div class="space-x-4 flex items-center">
+                <a href="{{ route('products.index') }}" class="text-sm font-bold text-pink-600 border-b-2 border-pink-600 pb-1">
+                    Dashboard
+                </a>
+                
+                <a href="{{ route('home') }}" target="_blank" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition flex items-center gap-1">
+                    Lihat Toko
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
             </div>
         </div>
     </nav>
